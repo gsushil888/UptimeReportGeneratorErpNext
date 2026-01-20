@@ -1,0 +1,68 @@
+{
+	"size": 0,
+	"query": {
+		"bool": {
+			"filter": [
+				{
+					"range": {
+						"@timestamp": {
+							"gte": "now-1d/d",
+							"lte": "now"
+						}
+					}
+				},
+				{
+					"term": {
+						"category.keyword": "{{entity}}"
+					}
+				}
+			]
+		}
+	},
+	"aggs": {
+		"group_by_hostname": {
+			"terms": {
+				"field": "ip_address.keyword",
+				"size": 100
+			},
+			"aggs": {
+				"memory_metrics": {
+					"filter": {
+						"term": {
+							"metricset.name.keyword": "memory"
+						}
+					},
+					"aggs": {
+						"current_memory": {
+							"top_hits": {
+								"sort": [
+									{
+										"@timestamp": {
+											"order": "desc"
+										}
+									}
+								],
+								"_source": {
+									"includes": [
+										"system.memory.actual.used.pct",
+										"system.memory.actual.used.bytes",
+										"system.memory.actual.free",
+										"system.memory.free",
+										"system.memory.used.pct",
+										"system.memory.used.bytes",
+										"system.memory.total",
+										"system.memory.cached",
+										"@timestamp",
+										"environment",
+               							"ip_address"
+									]
+								},
+								"size": 1
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

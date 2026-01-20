@@ -1,0 +1,82 @@
+{
+	"size": 0,
+	"query": {
+		"bool": {
+			"must": [
+				{
+					"term": {
+						"category.keyword": "{{entity}}"
+					}
+				},
+        {
+          "range": {
+            "@timestamp": {
+              "gte": "now-1d/d",
+              "lt": "now/d"
+            }
+          }
+        }
+			]
+		}
+	},
+	"aggs": {
+		"group_by_hostname": {
+			"terms": {
+				"field": "ip_address.keyword",
+				"size": 1000
+			},
+			"aggs": {
+				"group_by_mount": {
+					"terms": {
+						"field": "system.filesystem.mount_point.keyword",
+						"size": 1000
+					},
+					"aggs": {
+						"current_disk_space": {
+							"top_hits": {
+								"sort": [
+									{
+										"@timestamp": {
+											"order": "desc"
+										}
+									}
+								],
+								"size": 1,
+								"_source": {
+									"includes": [
+										"system.filesystem.used.bytes",
+										"system.filesystem.available",
+										"system.filesystem.total",
+										"system.filesystem.used.pct",
+										"system.filesystem.mount_point",
+										"system.filesystem.device_name",
+										"host.hostname",
+										"environment",
+										"ip_address"
+									]
+								}
+							}
+						},
+						"avg_disk_space_past": {
+							"filter": {
+								"range": {
+									"@timestamp": {
+										"gte": "now-1d/d",
+										"lt": "now/d"
+									}
+								}
+							},
+							"aggs": {
+								"avg_space": {
+									"avg": {
+										"field": "system.filesystem.used.pct"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
