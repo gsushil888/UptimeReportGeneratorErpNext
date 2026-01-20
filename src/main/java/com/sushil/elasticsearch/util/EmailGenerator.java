@@ -34,7 +34,7 @@ public class EmailGenerator {
 	public static void sendEmail(StringBuilder emailEntitiesList, String REPORT_FROM, String REPORT_TO,
 			List<String> pdfFilePaths) {
 
-		String emailSubject = "Uptime Reports";
+		String emailSubject = "Updated Uptime Reports with changes as client asked";
 		String emailMessage = "Dear Team,\n\nPlease find the attached Uptime Reports for your reference.\n\n"
 				+ "Report Period: \n" + REPORT_FROM + " to " + REPORT_TO + "\n\n" + "Entities: "
 				+ emailEntitiesList.toString().toUpperCase().replace("_", " ") + "\n\n"

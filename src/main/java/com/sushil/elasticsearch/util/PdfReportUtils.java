@@ -212,11 +212,11 @@ public class PdfReportUtils {
 		sectionsWithSubsections.put("Section E: DISK USAGE",
 				new String[] { "Display current disk usage percentage along with average usage for each mount point" });
 		
-		sectionsWithSubsections.put("Section F: Database Slow Query",
-				new String[] { "Display database slow queries with no. of occurence with timestamp" });
-
-		sectionsWithSubsections.put("Section G: Backup Summary Per Day",
-				new String[] { "Display Backup status with timestamp" });
+//		sectionsWithSubsections.put("Section F: Database Slow Query",
+//				new String[] { "Display database slow queries with no. of occurence with timestamp" });
+//
+//		sectionsWithSubsections.put("Section G: Backup Summary Per Day",
+//				new String[] { "Display Backup status with timestamp" });
 		
 		int sectionCounter = 1;
 		for (Map.Entry<String, String[]> entry : sectionsWithSubsections.entrySet()) {

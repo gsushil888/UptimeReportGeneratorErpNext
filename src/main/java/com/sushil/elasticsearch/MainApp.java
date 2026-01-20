@@ -92,8 +92,8 @@ public class MainApp {
 			templates.put("current_memory", loadTemplate("json.template.file.path.current_memory"));
 			templates.put("load", loadTemplate("json.template.file.path.load"));
 			templates.put("disk", loadTemplate("json.template.file.path.disk"));
-			templates.put("db_slow", loadTemplate("json.template.file.path.db_slow"));
-			templates.put("backups", loadTemplate("json.template.file.path.backups"));
+//			templates.put("db_slow", loadTemplate("json.template.file.path.db_slow"));
+//			templates.put("backups", loadTemplate("json.template.file.path.backups"));
 //			templates.put("current_redis", loadTemplate("json.template.file.path.current_redis"));
 
 		} catch (IOException e) {
@@ -200,8 +200,8 @@ public class MainApp {
 			MemoryReportGenerator.addMemorySection(client, document, jsonFilePathMap, reportName);
 			LoadNUptimeReportGenerator.addLoadSection(client, document, jsonFilePathMap, reportName);
 			DiskReportGenerator.addDiskSection(client, document, jsonFilePathMap, reportName);
-			DatabaseSlowQuery.addDBSlowSection(client, document, jsonFilePathMap);
-			BackupReportGenerator.addBackupSection(client, document, jsonFilePathMap);
+//			DatabaseSlowQuery.addDBSlowSection(client, document, jsonFilePathMap);
+//			BackupReportGenerator.addBackupSection(client, document, jsonFilePathMap);
 
 			document.close();
 			System.out.println("PDF generated successfully: " + pdfFilePath);
