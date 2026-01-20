@@ -1,3 +1,9 @@
-src/main/resources/*
+/target/
 
-target/*
+/src/main/resources/*
+
+*.log
+
+*.env
+
+*.properties
