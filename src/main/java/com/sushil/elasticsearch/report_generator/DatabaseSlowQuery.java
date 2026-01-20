@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.report_generator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,6 +24,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.sushil.elasticsearch.util.PdfReportUtils;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.aggregations.LongTermsBucket;

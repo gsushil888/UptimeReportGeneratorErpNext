@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch.model;
+package com.sushil.elasticsearch.model.disk;
 
 public class DiskUsage {
     private String hostname;

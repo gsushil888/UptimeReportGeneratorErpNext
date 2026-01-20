@@ -1,10 +1,10 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.util;
 
 import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
-import com.sushil.elasticsearch.ConfigLoader;
+import com.sushil.elasticsearch.config.ConfigLoader;
 
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;

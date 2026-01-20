@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.report_generator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +11,9 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.sushil.elasticsearch.config.ConfigLoader;
+import com.sushil.elasticsearch.util.PdfReportUtils;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,8 +38,8 @@ import jakarta.json.stream.JsonParser;
 
 public class AppUptimeReportGenerator {
 
-	static String REPORT_FROM = "";
-	static String REPORT_TO = "";
+	public static String REPORT_FROM = "";
+	public static String REPORT_TO = "";
 	private static final DateTimeFormatter ISO_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	private static final String REPORT_TIMESTAMP_FORMAT = ConfigLoader.get("pdf.date.format");
 

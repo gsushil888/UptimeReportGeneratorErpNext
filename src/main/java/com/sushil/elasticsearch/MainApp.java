@@ -4,6 +4,18 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.sushil.elasticsearch.config.ConfigLoader;
+import com.sushil.elasticsearch.config.ElasticsearchClientFactory;
+import com.sushil.elasticsearch.report_generator.AppUptimeReportGenerator;
+import com.sushil.elasticsearch.report_generator.BackupReportGenerator;
+import com.sushil.elasticsearch.report_generator.CpuReportGenerator;
+import com.sushil.elasticsearch.report_generator.DatabaseSlowQuery;
+import com.sushil.elasticsearch.report_generator.DiskReportGenerator;
+import com.sushil.elasticsearch.report_generator.LoadNUptimeReportGenerator;
+import com.sushil.elasticsearch.report_generator.MemoryReportGenerator;
+import com.sushil.elasticsearch.util.EmailGenerator;
+import com.sushil.elasticsearch.util.PdfReportUtils;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -47,7 +59,6 @@ public class MainApp {
 			}
 			Map<String, String> jsonFilePathMap = new HashMap<>();
 			tempFiles.forEach((key, file) -> jsonFilePathMap.put(key, file.getAbsolutePath()));
-//			System.out.println(jsonFilePathMap.containsKey("db_slow"));
 			Map<String, String> reportDateEntityData = addReportTimetToPdfPathAndReturnDatesMap(entity, pdfPath,
 					jsonFilePathMap);
 			String generatedPdfPath = reportDateEntityData.get("pdfPathWithDates");
@@ -63,7 +74,7 @@ public class MainApp {
 			emailEntitiesList.deleteCharAt(emailEntitiesList.length() - 1);
 			String report_from = AppUptimeReportGenerator.REPORT_FROM;
 			String report_to = AppUptimeReportGenerator.REPORT_TO;
-//			EmailGenerator.sendEmail(emailEntitiesList, report_from, report_to, pdfFilePaths);
+			EmailGenerator.sendEmail(emailEntitiesList, report_from, report_to, pdfFilePaths);
 		}
 //		long endTime = System.currentTimeMillis();
 //		System.out.println("Completed in : " + (endTime - startTime));
@@ -81,8 +92,8 @@ public class MainApp {
 			templates.put("current_memory", loadTemplate("json.template.file.path.current_memory"));
 			templates.put("load", loadTemplate("json.template.file.path.load"));
 			templates.put("disk", loadTemplate("json.template.file.path.disk"));
-//			templates.put("db_slow", loadTemplate("json.template.file.path.db_slow"));
-//			templates.put("backups", loadTemplate("json.template.file.path.backups"));
+			templates.put("db_slow", loadTemplate("json.template.file.path.db_slow"));
+			templates.put("backups", loadTemplate("json.template.file.path.backups"));
 //			templates.put("current_redis", loadTemplate("json.template.file.path.current_redis"));
 
 		} catch (IOException e) {
@@ -115,6 +126,7 @@ public class MainApp {
 	}
 
 	private static File saveToTempFile(String fileName, String content) throws IOException {
+//		System.out.println("Save File:  " + fileName);
 		File tempFile = File.createTempFile(fileName.replace(".json", ""), ".json");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
 			writer.write(content);
@@ -184,12 +196,12 @@ public class MainApp {
 			PdfReportUtils.addOverviewPage(document);
 			document.newPage();
 			AppUptimeReportGenerator.addUptimeSection(document, client, jsonFilePathMap);
-			CpuReportGenerator.addCpuSection(client, document, jsonFilePathMap);
-			MemoryReportGenerator.addMemorySection(client, document, jsonFilePathMap);
-			LoadNUptimeReportGenerator.addLoadSection(client, document, jsonFilePathMap);
-			DiskReportGenerator.addDiskSection(client, document, jsonFilePathMap);
-//			DatabaseSlowQuery.addDBSlowSection(client, document, jsonFilePathMap);
-//			BackupReportGenerator.addBackupSection(client, document, jsonFilePathMap);
+			CpuReportGenerator.addCpuSection(client, document, jsonFilePathMap, reportName);
+			MemoryReportGenerator.addMemorySection(client, document, jsonFilePathMap, reportName);
+			LoadNUptimeReportGenerator.addLoadSection(client, document, jsonFilePathMap, reportName);
+			DiskReportGenerator.addDiskSection(client, document, jsonFilePathMap, reportName);
+			DatabaseSlowQuery.addDBSlowSection(client, document, jsonFilePathMap);
+			BackupReportGenerator.addBackupSection(client, document, jsonFilePathMap);
 
 			document.close();
 			System.out.println("PDF generated successfully: " + pdfFilePath);

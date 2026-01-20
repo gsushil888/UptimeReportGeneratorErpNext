@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.old;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,7 +14,8 @@ import java.util.Map;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.sushil.elasticsearch.ConfigLoader;
+import com.sushil.elasticsearch.config.ConfigLoader;
+import com.sushil.elasticsearch.util.PdfReportUtils;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;

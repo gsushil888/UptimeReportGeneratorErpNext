@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.report_generator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,6 +12,8 @@ import java.util.Map;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.sushil.elasticsearch.config.ConfigLoader;
+import com.sushil.elasticsearch.util.PdfReportUtils;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
@@ -26,33 +28,34 @@ import jakarta.json.stream.JsonParser;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class DiskReportGenerator {
 
-	private static final String ENVIRONMENT_PREFIX = ConfigLoader.get("exclude.hostname.start_with");
+	// ❌ REMOVED global ENVIRONMENT_PREFIX
 
 	private static final String METRICBEAT_INDEX = "metricbeat_index";
-
 	private static final String SECTION_HEADER_DISK_USAGE = "Section E: DISK USAGE";
-
 	private static final String SUBTITLE_HEADER_DISK_DETAILS = "1. Disk Usage Details for server based on mount point";
 
 	private static final List<String> DISK_TABLE_HEADERS = Arrays.asList("IP Address", "Filesystem", "Mount Point",
 			"Used %");
 
 	/*
-	 * ===== PUBLIC ENTRY ==========
+	 * ===== PUBLIC ENTRY ========== ✅ entity parameter added
 	 */
 	public static void addDiskSection(ElasticsearchClient client, Document document,
-			Map<String, String> jsonFilePathMap) throws IOException, DocumentException {
+			Map<String, String> jsonFilePathMap, String entity) throws IOException, DocumentException {
+
+		// ✅ entity-wise exclusion prefix
+		String excludedEnvPrefix = getExcludedEnvPrefix(entity);
 
 		try (InputStream dataStream = new FileInputStream(jsonFilePathMap.get("disk"))) {
-			generateDiskUsageTables(client, document, dataStream);
+			generateDiskUsageTables(client, document, dataStream, excludedEnvPrefix);
 		}
 	}
 
 	/*
 	 * ========== TABLE CREATION =====================
 	 */
-	private static void generateDiskUsageTables(ElasticsearchClient client, Document document, InputStream queryStream)
-			throws IOException, DocumentException {
+	private static void generateDiskUsageTables(ElasticsearchClient client, Document document, InputStream queryStream,
+			String excludedEnvPrefix) throws IOException, DocumentException {
 
 		PdfPTable table = new PdfPTable(DISK_TABLE_HEADERS.size());
 		table.setWidthPercentage(100);
@@ -74,11 +77,9 @@ public class DiskReportGenerator {
 
 		document.newPage();
 		PdfReportUtils.addStyledSectionHeader(document, SECTION_HEADER_DISK_USAGE);
-
-		// ✅ UPDATED SUBTITLE WITH TIMESTAMP
 		PdfReportUtils.addStyledSubtitleSectionHeader(document, getSubtitleWithTimestamp());
 
-		populateDiskUsageData(client, queryStream, table);
+		populateDiskUsageData(client, queryStream, table, excludedEnvPrefix);
 
 		if (table.getRows().size() == initialRows) {
 			PdfPCell noData = new PdfPCell(
@@ -110,8 +111,8 @@ public class DiskReportGenerator {
 	/*
 	 * ======== DATA PROCESSING (IP ROWSPAN) ===============
 	 */
-	private static void populateDiskUsageData(ElasticsearchClient client, InputStream dataStream, PdfPTable table)
-			throws IOException {
+	private static void populateDiskUsageData(ElasticsearchClient client, InputStream dataStream, PdfPTable table,
+			String excludedEnvPrefix) throws IOException {
 
 		Aggregate ipAgg = fetchDiskAgg(client, dataStream);
 		List<StringTermsBucket> ipBuckets = ipAgg.sterms().buckets().array();
@@ -119,9 +120,7 @@ public class DiskReportGenerator {
 		for (StringTermsBucket ipBucket : ipBuckets) {
 
 			String ipAddress = ipBucket.key().stringValue();
-
 			Aggregate mountAgg = ipBucket.aggregations().get("group_by_mount");
-
 			List<StringTermsBucket> mountBuckets = mountAgg.sterms().buckets().array();
 
 			mountBuckets.sort((a, b) -> Double.compare(getUsedPct(b), getUsedPct(a)));
@@ -137,22 +136,17 @@ public class DiskReportGenerator {
 
 					Map<String, Object> source = hit.source().to(Map.class);
 
-					// Environment filter
-					String environment = (String) source.get("environment");
-
-					if (environment != null && environment.startsWith(ENVIRONMENT_PREFIX)) {
+					// ✅ ENTITY-WISE ENV FILTER
+					if (shouldExclude(source.get("environment"), excludedEnvPrefix))
 						continue;
-					}
 
 					String filesystem = (String) getByPath(source, "system.filesystem.device_name");
-
 					String mountPoint = (String) getByPath(source, "system.filesystem.mount_point");
 
 					Object usedPctObj = getByPath(source, "system.filesystem.used.pct");
 
 					double usedPct = usedPctObj == null ? 0 : Double.parseDouble(usedPctObj.toString()) * 100;
 
-					// Add IP only once (rowspan)
 					if (!ipCellAdded) {
 						PdfPCell ipCell = PdfReportUtils.createDiskDataCell(ipAddress);
 						ipCell.setRowspan(totalRowsForIp);
@@ -170,9 +164,23 @@ public class DiskReportGenerator {
 	}
 
 	/*
+	 * ====== ENTITY-WISE EXCLUSION ===========
+	 */
+	private static String getExcludedEnvPrefix(String entity) {
+		return ConfigLoader.get("exclude.hostname.start_with." + entity.toUpperCase());
+	}
+
+	private static boolean shouldExclude(Object environment, String excludedEnvPrefix) {
+
+		return excludedEnvPrefix != null && !excludedEnvPrefix.isBlank() && environment != null
+				&& environment.toString().startsWith(excludedEnvPrefix);
+	}
+
+	/*
 	 * ====== UTILITIES ===========
 	 */
 	private static PdfPCell createHighlightedCell(String text, double value) {
+
 		PdfPCell cell = PdfReportUtils.createDiskDataCell(text);
 
 		if (value > 80) {
@@ -184,6 +192,7 @@ public class DiskReportGenerator {
 	}
 
 	private static double getUsedPct(StringTermsBucket bucket) {
+
 		Aggregate currentDisk = bucket.aggregations().get("current_disk_space");
 
 		List<Hit<JsonData>> hits = currentDisk.topHits().hits().hits();
@@ -205,13 +214,11 @@ public class DiskReportGenerator {
 		Object current = source;
 
 		for (String key : keys) {
-			if (!(current instanceof Map)) {
+			if (!(current instanceof Map))
 				return null;
-			}
 			current = ((Map<String, Object>) current).get(key);
-			if (current == null) {
+			if (current == null)
 				return null;
-			}
 		}
 		return current;
 	}

@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch.dao;
+package com.sushil.elasticsearch.dao.backup;
 
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.sushil.elasticsearch.model.BackupSummary;
+import com.sushil.elasticsearch.model.backup.BackupSummary;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;

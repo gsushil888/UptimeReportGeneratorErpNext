@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch.model;
+package com.sushil.elasticsearch.model.backup;
 
 public class BackupSummary {
 	private String backupType;

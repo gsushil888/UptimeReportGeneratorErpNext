@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.util;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -11,6 +11,8 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.sushil.elasticsearch.report_generator.AppUptimeReportGenerator;
+
 import co.elastic.clients.elasticsearch._types.aggregations.DateHistogramBucket;
 
 import java.text.SimpleDateFormat;
@@ -115,7 +117,7 @@ public class PdfReportUtils {
 		}
 	}
 
-	static PdfPCell createHeaderCell(String text) {
+	public static PdfPCell createHeaderCell(String text) {
 		PdfPCell cell = new PdfPCell(new Paragraph(text, FontFactory.getFont(FontFactory.HELVETICA_BOLD,10)));
 		cell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
 		cell.setVerticalAlignment(PdfPCell.ALIGN_MIDDLE);
@@ -145,7 +147,7 @@ public class PdfReportUtils {
 	}
 
 
-	static PdfPCell createDataCell(String text) {
+	public static PdfPCell createDataCell(String text) {
 		PdfPCell cell = new PdfPCell(new Paragraph(text, FontFactory.getFont(FontFactory.HELVETICA, 11)));
 		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -153,7 +155,7 @@ public class PdfReportUtils {
 		return cell;
 	}
 
-	static PdfPCell createDiskDataCell(String text) {
+	public static PdfPCell createDiskDataCell(String text) {
 		PdfPCell cell = new PdfPCell(new Paragraph(text, FontFactory.getFont(FontFactory.HELVETICA, 10)));
 		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -210,11 +212,11 @@ public class PdfReportUtils {
 		sectionsWithSubsections.put("Section E: DISK USAGE",
 				new String[] { "Display current disk usage percentage along with average usage for each mount point" });
 		
-//		sectionsWithSubsections.put("Section F: Database Slow Query",
-//				new String[] { "Display database slow queries with no. of occurence with timestamp" });
-//
-//		sectionsWithSubsections.put("Section G: Backup Summary Per Day",
-//				new String[] { "Display Backup status with timestamp" });
+		sectionsWithSubsections.put("Section F: Database Slow Query",
+				new String[] { "Display database slow queries with no. of occurence with timestamp" });
+
+		sectionsWithSubsections.put("Section G: Backup Summary Per Day",
+				new String[] { "Display Backup status with timestamp" });
 		
 		int sectionCounter = 1;
 		for (Map.Entry<String, String[]> entry : sectionsWithSubsections.entrySet()) {

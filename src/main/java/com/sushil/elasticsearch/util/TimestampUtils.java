@@ -1,7 +1,9 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sushil.elasticsearch.config.ConfigLoader;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;

@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.old;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -21,7 +21,8 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
-import com.sushil.elasticsearch.dao.ReportDao;
+import com.sushil.elasticsearch.config.ConfigLoader;
+import com.sushil.elasticsearch.dao.all.ReportDao;
 import com.sushil.elasticsearch.model.memory.MemoryDetailRecord;
 import com.sushil.elasticsearch.model.memory.MemoryThresholdRecord;
 import com.sushil.elasticsearch.model.memory.MemoryUsageRecord;

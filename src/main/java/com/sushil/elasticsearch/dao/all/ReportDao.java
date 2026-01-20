@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch.dao;
+package com.sushil.elasticsearch.dao.all;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sushil.elasticsearch.ConfigLoader;
+import com.sushil.elasticsearch.config.ConfigLoader;
 import com.sushil.elasticsearch.model.cpu.CpuDetailRecord;
 import com.sushil.elasticsearch.model.cpu.CpuStatsDto;
 import com.sushil.elasticsearch.model.cpu.CpuThresholdRecord;
@@ -101,7 +101,7 @@ public class ReportDao {
 			}
 		}
 
-		System.out.println("CURRENT CPU RECORDS : " + records);
+//		System.out.println("CURRENT CPU RECORDS : " + records);
 		return records;
 	}
 
@@ -164,7 +164,7 @@ public class ReportDao {
 			}
 		}
 
-		System.out.println("THRESHOLD CPU RECORDS : " + exceedRecords);
+//		System.out.println("THRESHOLD CPU RECORDS : " + exceedRecords);
 		return exceedRecords;
 	}
 
@@ -237,7 +237,7 @@ public class ReportDao {
 			detailsMap.put(hostname, details);
 		}
 
-		System.out.println("DETAILED CPU : " + detailsMap);
+//		System.out.println("DETAILED CPU : " + detailsMap);
 		return detailsMap;
 	}
 
@@ -258,8 +258,8 @@ public class ReportDao {
 				}
 			}
 		}
-		System.out.println("CPU STATS : " + stats);
-		System.out.println();
+//		System.out.println("CPU STATS : " + stats);
+//		System.out.println();
 		return stats;
 	}
 
@@ -309,9 +309,9 @@ public class ReportDao {
 				records.add(rec);
 			}
 		}
-		System.out.println();
-		System.out.println("CURRENT MEMORY: " + records);
-		System.out.println();
+//		System.out.println();
+//		System.out.println("CURRENT MEMORY: " + records);
+//		System.out.println();
 		return records;
 	}
 
@@ -374,8 +374,8 @@ public class ReportDao {
 				}
 			}
 		}
-		System.out.println("THRSHOLD MEMORY : " + exceedRecords);
-		System.out.println();
+//		System.out.println("THRSHOLD MEMORY : " + exceedRecords);
+//		System.out.println();
 		return exceedRecords;
 	}
 
@@ -422,8 +422,8 @@ public class ReportDao {
 			}
 			detailsMap.put(hostname, details);
 		}
-		System.out.println("DETAILED MEMORY : " + detailsMap);
-		System.out.println();
+//		System.out.println("DETAILED MEMORY : " + detailsMap);
+//		System.out.println();
 		return detailsMap;
 	}
 

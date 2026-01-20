@@ -1,4 +1,4 @@
-package com.sushil.elasticsearch;
+package com.sushil.elasticsearch.config;
 
 import java.io.FileInputStream;
 import java.io.IOException;
